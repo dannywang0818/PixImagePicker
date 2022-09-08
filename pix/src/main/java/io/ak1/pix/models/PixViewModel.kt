@@ -34,17 +34,17 @@ internal class PixViewModel : ViewModel(), PixLifecycle {
         selectionList.value?.clear()
         allImagesList.postValue(
             localResourceManager.retrieveMedia(
-                limit = sizeInitial,
+//                limit = sizeInitial,
                 mode = options.mode
             )
         )
-        val modelList = localResourceManager.retrieveMedia(
-            start = sizeInitial + 1,
-            mode = options.mode
-        )
-        if (modelList.list.isNotEmpty()) {
-            allImagesList.postValue(modelList)
-        }
+//        val modelList = localResourceManager.retrieveMedia(
+//            start = sizeInitial + 1,
+//            mode = options.mode
+//        )
+//        if (modelList.list.isNotEmpty()) {
+//            allImagesList.postValue(modelList)
+//        }
     }
 
 
