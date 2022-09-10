@@ -10,4 +10,12 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
+
+    <application>
+        <activity
+            android:name=".ui.MediaPreviewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Pix" />
+    </application>
+
 </manifest>

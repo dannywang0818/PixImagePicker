@@ -1,6 +1,7 @@
 package io.ak1.pix
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -26,6 +27,7 @@ import io.ak1.pix.interfaces.OnSelectionListener
 import io.ak1.pix.models.Img
 import io.ak1.pix.models.Options
 import io.ak1.pix.models.PixViewModel
+import io.ak1.pix.ui.MediaPreviewActivity
 import io.ak1.pix.utility.ARG_PARAM_PIX
 import io.ak1.pix.utility.ARG_PARAM_PIX_KEY
 import io.ak1.pix.utility.CustomItemTouchListener
@@ -81,14 +83,15 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
 
     override fun onPause() {
         super.onPause()
-        if (mBottomSheetBehavior?.state != BottomSheetBehavior.STATE_COLLAPSED) {
-            mBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
-        }
+//        if (mBottomSheetBehavior?.state != BottomSheetBehavior.STATE_COLLAPSED) {
+//            mBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
+//        }
 
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //debug problem...
         options = arguments?.getParcelable(ARG_PARAM_PIX) ?: Options()
         requireActivity().let {
             it.setupScreen()
@@ -309,17 +312,36 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
     }
 
     private fun setupAdapters(context: FragmentActivity) {
+
+        val thisContext = requireContext();
         val onSelectionListener: OnSelectionListener = object : OnSelectionListener {
             override fun onClick(element: Img?, view: View?, position: Int) {
-                model.onImageSelected(element, position) {
-                    val size = model.selectionListSize
-                    if (options.count <= size) {
-                        requireActivity().toast(size)
-                        return@onImageSelected false
-                    }
-                    position.selection(it)
-                    return@onImageSelected true
-                }
+
+
+                val intent = Intent(thisContext, MediaPreviewActivity::class.java)
+//                intent.putExtra(AlbumPreviewActivity.EXTRA_ALBUM, album)
+//                intent.putExtra(AlbumPreviewActivity.EXTRA_ITEM, item)
+//                intent.putExtra(
+//                    BasePreviewActivity.EXTRA_DEFAULT_BUNDLE,
+//                    mSelectedCollection.getDataWithBundle()
+//                )
+//                intent.putExtra(BasePreviewActivity.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
+//                registerForActivityResult
+                startActivity(intent)
+//                startActivityForResult(
+//                    intent,
+//                    com.zhihu.matisse.ui.MatisseActivity.REQUEST_CODE_PREVIEW
+//                )
+
+//                model.onImageSelected(element, position) {
+//                    val size = model.selectionListSize
+//                    if (options.count <= size) {
+//                        requireActivity().toast(size)
+//                        return@onImageSelected false
+//                    }
+//                    position.selection(it)
+//                    return@onImageSelected true
+//                }
             }
 
             override fun onLongClick(element: Img?, view: View?, position: Int) =
