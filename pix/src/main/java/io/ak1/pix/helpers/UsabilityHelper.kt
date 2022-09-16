@@ -45,11 +45,12 @@ open class PixEventCallback {
     }
 
 
-    suspend fun on(
+
+    fun on(
         coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main),
         handler: suspend (Any) -> Unit
     ) = coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
-        backPressedEvents.asSharedFlow().collect {
+        backPressedEvents.collect {
             handler(it)
         }
     }
@@ -66,7 +67,12 @@ open class PixEventCallback {
         coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Main),
         handler: suspend (Results) -> Unit
     ) = coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
-        outputEvents.asSharedFlow().collect { handler(it) }
+        outputEvents.collect { handler(it) }
+    }
+
+
+    companion object {
+        val BackPressedResult = PixEventCallback.Results(status = Status.BACK_PRESSED)
     }
 }
 
@@ -83,7 +89,7 @@ fun AppCompatActivity.addPixToActivity(
             arguments = Bundle().apply {
                 putParcelable(ARG_PARAM_PIX, options)
             }
-        }).commit()
+        }).setReorderingAllowed(true).addToBackStack(null).commit()
 }
 
 fun pixFragment(

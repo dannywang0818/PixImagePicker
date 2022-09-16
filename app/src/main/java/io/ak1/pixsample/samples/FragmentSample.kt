@@ -38,7 +38,7 @@ class FragmentSample : AppCompatActivity() {
         addPixToActivity(R.id.container, options) {
             when (it.status) {
                 PixEventCallback.Status.SUCCESS -> {
-                    showResultsFragment()
+//                    showResultsFragment()
                     it.data.forEach {
                         Log.e(TAG, "showCameraFragment: ${it.path}")
                     }
@@ -55,14 +55,14 @@ class FragmentSample : AppCompatActivity() {
     private fun showResultsFragment() {
         showStatusBar()
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, resultsFragment).commit()
+            .replace(R.id.container, resultsFragment).setReorderingAllowed(true).addToBackStack(null).commit()
     }
 
     override fun onBackPressed() {
         val f = supportFragmentManager.findFragmentById(R.id.container)
-        if (f is ResultsFragment)
-            super.onBackPressed()
-        else
+//        if (f is ResultsFragment)
+//            super.onBackPressed()
+//        else
             PixBus.onBackPressedEvent()
     }
 

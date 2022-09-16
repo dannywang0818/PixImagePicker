@@ -27,7 +27,8 @@ import io.ak1.pix.interfaces.OnSelectionListener
 import io.ak1.pix.models.Img
 import io.ak1.pix.models.Options
 import io.ak1.pix.models.PixViewModel
-import io.ak1.pix.ui.MediaPreviewActivity
+import io.ak1.pix.ui.PreviewActivity
+import io.ak1.pix.ui.PreviewBaseActivity
 import io.ak1.pix.utility.ARG_PARAM_PIX
 import io.ak1.pix.utility.ARG_PARAM_PIX_KEY
 import io.ak1.pix.utility.CustomItemTouchListener
@@ -46,6 +47,8 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
     private val model: PixViewModel by viewModels()
     private var _binding: FragmentPixBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var backPressedJob: Job
 
     private var permReqLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -174,6 +177,8 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
         model.selectionList.removeObservers(requireActivity())
         model.longSelection.removeObservers(requireActivity())
         model.callResults.removeObservers(requireActivity())
+
+        backPressedJob.cancel()
     }
 
     private fun observeSelectionList() {
@@ -209,15 +214,23 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
                 model.selectionList.postValue(HashSet())
                 options.preSelectedUrls.clear()
                 val results = set.map { it.contentUrl }
-                resultCallback?.invoke(PixEventCallback.Results(results))
-                PixBus.returnObjects(
-                    event = PixEventCallback.Results(
-                        results,
-                        PixEventCallback.Status.SUCCESS
-                    )
-                )
+                invokeCallback(PixEventCallback.Results(results));
             }
         }
+    }
+
+    private fun invokeCallback(result: PixEventCallback.Results) {
+//        resultCallback?.invoke(PixEventCallback.Results(results))
+//        PixBus.returnObjects(
+//            event = PixEventCallback.Results(
+//                results,
+//                PixEventCallback.Status.SUCCESS
+//            )
+//        )
+        resultCallback?.invoke(result)
+        PixBus.returnObjects(
+            event = result
+        )
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -232,28 +245,35 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
 
 
     private fun backPressController() {
-        CoroutineScope(Dispatchers.Main).launch {
-            PixBus.on(this) {
-                val list = model.selectionList.value ?: HashSet()
-                when {
-                    list.size > 0 -> {
-                        for (img in list) {
-                            //  options.preSelectedUrls = ArrayList()
-                            instantImageAdapter.select(false, img.position)
-                            mainImageAdapter.select(false, img.position)
-                        }
-                        model.selectionList.postValue(HashSet())
+        backPressedJob = PixBus.on {
+
+//        val containerId = (binding.root.parent as ViewGroup).id;
+//        val f = parentFragmentManager.findFragmentById(containerId)
+//
+//        if (f is PixFragment)
+//            return@on;
+
+            val list = model.selectionList.value ?: HashSet()
+            when {
+                list.size > 0 -> {
+                    for (img in list) {
+                        //  options.preSelectedUrls = ArrayList()
+                        instantImageAdapter.select(false, img.position)
+                        mainImageAdapter.select(false, img.position)
                     }
-                    mBottomSheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED -> {
-                        mBottomSheetBehavior?.setState(BottomSheetBehavior.STATE_COLLAPSED)
-                    }
-                    else -> {
-                        model.returnObjects()
-                    }
+                    model.selectionList.postValue(HashSet())
+                }
+                mBottomSheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED -> {
+                    mBottomSheetBehavior?.setState(BottomSheetBehavior.STATE_COLLAPSED)
+                }
+                else -> {
+//                        model.returnObjects()
+                    invokeCallback(PixEventCallback.BackPressedResult);
                 }
             }
         }
     }
+
 
     private fun setupControls() {
         binding.setupClickControls(model, cameraXManager, options) { int, uri ->
@@ -313,21 +333,43 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
 
     private fun setupAdapters(context: FragmentActivity) {
 
-        val thisContext = requireContext();
+        val containerId = (binding.root.parent as ViewGroup).id;
+        Log.e(TAG, "containerId: $containerId")
         val onSelectionListener: OnSelectionListener = object : OnSelectionListener {
             override fun onClick(element: Img?, view: View?, position: Int) {
 
+//                if (isAdded) {
+//
+////                    parentFragmentManager.beginTransaction()
+////                        .replace(containerId, MutableCollectionFragmentFragment()).commit()
+//
+//
+//                    parentFragmentManager.commit {
+//                        replace<PreviewFragmentActivity>(
+//                            containerId, PreviewFragmentActivity::class.java.simpleName
+//                        )
+//                        setReorderingAllowed(true)
+//                        addToBackStack(null)
+//                    }
+//                }
 
-                val intent = Intent(thisContext, MediaPreviewActivity::class.java)
+                val intent = Intent(context, PreviewActivity::class.java)
+//                intent.putExtra(MediaPreviewActivity.EXTRA_ITEM, element)
+//
+//
 //                intent.putExtra(AlbumPreviewActivity.EXTRA_ALBUM, album)
-//                intent.putExtra(AlbumPreviewActivity.EXTRA_ITEM, item)
+                intent.putExtra(PreviewBaseActivity.EXTRA_ITEM, element)
 //                intent.putExtra(
 //                    BasePreviewActivity.EXTRA_DEFAULT_BUNDLE,
 //                    mSelectedCollection.getDataWithBundle()
 //                )
 //                intent.putExtra(BasePreviewActivity.EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable)
 //                registerForActivityResult
+
+
                 startActivity(intent)
+
+
 //                startActivityForResult(
 //                    intent,
 //                    com.zhihu.matisse.ui.MatisseActivity.REQUEST_CODE_PREVIEW
@@ -446,5 +488,9 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
             }
         }
         return false
+    }
+
+    companion object {
+        private const val TAG = "PixFragment"
     }
 }

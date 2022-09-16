@@ -16,6 +16,10 @@
             android:name=".ui.MediaPreviewActivity"
             android:exported="false"
             android:theme="@style/Theme.Pix" />
+        <activity
+            android:name=".ui.PreviewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Pix" />
     </application>
 
 </manifest>
