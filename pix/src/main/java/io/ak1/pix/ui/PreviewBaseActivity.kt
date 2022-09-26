@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +31,8 @@ import androidx.viewpager2.widget.ViewPager2
 import io.ak1.pix.R
 import io.ak1.pix.adapters.PreviewPagerAdapter
 import io.ak1.pix.databinding.ActivityPreviewBinding
+import io.ak1.pix.livedata.MediaLiveData
+import io.ak1.pix.models.ModelList
 
 /**
  * Shows how to use notifyDataSetChanged with [ViewPager2]
@@ -97,6 +100,10 @@ abstract class PreviewBaseActivity : FragmentActivity() {
             changeDataSet { items.addNewAt(itemSpinner.selectedItemPosition + 1) }
         }
 
+        items.imageList.observe(this ){
+            previewAdapter.setItems(it)
+        }
+
 
     }
 
@@ -143,6 +150,10 @@ abstract class PreviewBaseActivity : FragmentActivity() {
 
 /** A very simple collection of items. Optimized for simplicity (i.e. not performance). */
 class ItemsViewModel : ViewModel() {
+    private val allImagesList by lazy { MediaLiveData.get(MediaLiveData.TAG) }
+    val imageList: LiveData<ModelList> = allImagesList
+
+
     private var nextValue = 1L
 
     private val items = (1..9).map { longToItem(nextValue++) }.toMutableList()

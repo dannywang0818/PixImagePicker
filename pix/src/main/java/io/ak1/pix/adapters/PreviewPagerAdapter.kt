@@ -2,6 +2,8 @@ package io.ak1.pix.adapters
 
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import io.ak1.pix.models.Img
+import io.ak1.pix.models.ModelList
 import io.ak1.pix.ui.fragments.PageFragment
 
 class PreviewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
@@ -10,20 +12,32 @@ class PreviewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
 //    override fun createFragment(position: Int): Fragment = PreviewPagerFragment()
 
 
-    private val items: ArrayList<String> = ArrayList<String>()
+    private var items: ModelList? = null
 
-    init {
-        items.add("first item...")
-        items.add("second item...")
+    fun setItems(imageItems: ModelList?) {
+        items = imageItems
+        notifyDataSetChanged()
     }
 
     override fun createFragment(position: Int): PageFragment {
 //        val itemId = items.itemId(position)
 //        val itemText = items.getItemById(itemId)
-        return PageFragment.newInstance("itemText", "2")
+        var img: Img? = null
+        if (items != null) {
+            img = items?.list?.get(position)
+        }
+        return PageFragment.newInstance(img, "2")
     }
 
-    override fun getItemCount(): Int = items.size
-    override fun getItemId(position: Int): Long = position.toLong()
-    override fun containsItem(itemId: Long): Boolean = items.contains(itemId.toString())
+    override fun getItemCount(): Int {
+        if (items == null) {
+            return 0
+        }
+        return items?.list?.size!!
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+//    override fun containsItem(itemId: Long): Boolean = items?.list?.contains(itemId.toString())
 }
