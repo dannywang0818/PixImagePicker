@@ -41,7 +41,7 @@ internal class LocalResourceManager(
     }
 
     var preSelectedUrls: List<Uri> = ArrayList()
-    fun retrieveMedia(
+    suspend fun retrieveMedia(
         start: Int = 0,
         limit: Int = 0,
         mode: Mode = Mode.All

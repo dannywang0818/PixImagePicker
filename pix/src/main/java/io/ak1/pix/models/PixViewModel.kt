@@ -1,10 +1,11 @@
 package io.ak1.pix.models
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import io.ak1.pix.helpers.LocalResourceManager
 import io.ak1.pix.interfaces.PixLifecycle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Created By Akshay Sharma on 17,June,2021
@@ -29,22 +30,25 @@ internal class PixViewModel : ViewModel(), PixLifecycle {
     val imageList: LiveData<ModelList> = allImagesList
 
     private lateinit var options: Options
-    suspend fun retrieveImages(localResourceManager: LocalResourceManager) {
-        val sizeInitial = 100
-        selectionList.value?.clear()
-        allImagesList.postValue(
-            localResourceManager.retrieveMedia(
-//                limit = sizeInitial,
+    fun retrieveImages(localResourceManager: LocalResourceManager) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val sizeInitial = 100
+            selectionList.value?.clear()
+            allImagesList.postValue(
+                localResourceManager.retrieveMedia(
+                    limit = sizeInitial,
+                    mode = options.mode
+                )
+            )
+            val modelList = localResourceManager.retrieveMedia(
+//                start = sizeInitial + 1,
                 mode = options.mode
             )
-        )
-//        val modelList = localResourceManager.retrieveMedia(
-//            start = sizeInitial + 1,
-//            mode = options.mode
-//        )
-//        if (modelList.list.isNotEmpty()) {
-//            allImagesList.postValue(modelList)
-//        }
+            if (modelList.list.isNotEmpty()) {
+                allImagesList.postValue(modelList)
+            }
+        }
     }
 
 

@@ -319,15 +319,17 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
         if (scope.isActive) {
             scope.cancel()
         }
-        scope = CoroutineScope(Dispatchers.IO)
-        scope.launch {
-            val localResourceManager = LocalResourceManager(requireContext()).apply {
-                this.preSelectedUrls = options.preSelectedUrls
-            }
-            instantImageAdapter.clearList()
-            mainImageAdapter.clearList()
-            model.retrieveImages(localResourceManager)
+
+        val localResourceManager = LocalResourceManager(requireContext()).apply {
+            this.preSelectedUrls = options.preSelectedUrls
         }
+        instantImageAdapter.clearList()
+        mainImageAdapter.clearList()
+        model.retrieveImages(localResourceManager)
+
+//        scope = CoroutineScope(Dispatchers.IO)
+//        scope.launch {
+//        }
 
     }
 
