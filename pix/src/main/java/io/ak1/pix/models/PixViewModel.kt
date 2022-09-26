@@ -3,6 +3,8 @@ package io.ak1.pix.models
 import androidx.lifecycle.*
 import io.ak1.pix.helpers.LocalResourceManager
 import io.ak1.pix.interfaces.PixLifecycle
+import io.ak1.pix.livedata.MediaLiveData
+import io.ak1.pix.utility.TAG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -17,7 +19,8 @@ internal class PixViewModel : ViewModel(), PixLifecycle {
 
     val longSelection: MutableLiveData<Boolean> = MutableLiveData(false)
     val selectionList by lazy { MutableLiveData<MutableSet<Img>>(HashSet()) }
-    private val allImagesList by lazy { MutableLiveData(ModelList()) }
+    private val allImagesList by lazy { MediaLiveData.get(MediaLiveData.TAG) }
+    val imageList: LiveData<ModelList> = allImagesList
     val callResults by lazy { MutableLiveData<Event<MutableSet<Img>>>() }
     val longSelectionValue: Boolean
         get() {
@@ -27,7 +30,6 @@ internal class PixViewModel : ViewModel(), PixLifecycle {
         get() {
             return selectionList.value?.size ?: 0
         }
-    val imageList: LiveData<ModelList> = allImagesList
 
     private lateinit var options: Options
     fun retrieveImages(localResourceManager: LocalResourceManager) {
@@ -93,6 +95,10 @@ internal class PixViewModel : ViewModel(), PixLifecycle {
 
     fun setOptions(options: Options) {
         this.options = options
+    }
+
+    companion object{
+
     }
 }
 

@@ -64,7 +64,7 @@ enum class Ratio : Parcelable {
     RATIO_4_3, RATIO_16_9, RATIO_AUTO
 }
 
-internal class ModelList(
+class ModelList(
     var list: ArrayList<Img> = ArrayList(),
     var selection: ArrayList<Img> = ArrayList()
 )
