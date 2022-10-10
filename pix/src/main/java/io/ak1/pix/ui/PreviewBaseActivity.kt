@@ -63,6 +63,7 @@ abstract class PreviewBaseActivity : FragmentActivity() {
         itemSpinner = binding.itemSpinner
         checkboxDiffUtil = binding.useDiffUtil
         viewPager = binding.viewPager
+        viewPager.offscreenPageLimit = 2
 
         previewAdapter = PreviewPagerAdapter(this)
         viewPager.adapter = previewAdapter

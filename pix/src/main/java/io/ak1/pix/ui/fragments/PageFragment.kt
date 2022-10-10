@@ -1,14 +1,15 @@
 package io.ak1.pix.ui.fragments
 
+import android.graphics.Point
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import io.ak1.pix.R
 import io.ak1.pix.databinding.FragmentPageBinding
+import io.ak1.pix.engine.PicassoEngine
 import io.ak1.pix.models.Img
+import io.ak1.pix.utility.PhotoMetadataUtils
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -53,10 +54,17 @@ class PageFragment : Fragment() {
 
         val zoomImageView = binding.zoomImageView
         val zoomEngine = zoomImageView.engine
-        zoomImageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.jetpack_logo))
+//        zoomImageView.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.jetpack_logo))
 
-        zoomEngine.panTo(20.0F, 30F, true);
+//        zoomEngine.panTo(20.0F, 30F, true);
 
+        val size: Point? = PhotoMetadataUtils.getBitmapSize(
+            pixImg?.contentUrl,
+            requireActivity()
+        )
+        if (size != null) {
+            PicassoEngine.get().loadImage(context, size.x, size.y, zoomImageView, pixImg?.contentUrl)
+        }
     }
 
     companion object {

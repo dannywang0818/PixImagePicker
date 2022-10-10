@@ -16,10 +16,10 @@
         app:transformationGravity="auto"
         app:alignment="center"
         app:overScrollHorizontal="true"
-        app:overScrollVertical="true"
+        app:overScrollVertical="false"
         app:overPinchable="true"
         app:horizontalPanEnabled="true"
-        app:verticalPanEnabled="true"
+        app:verticalPanEnabled="false"
         app:zoomEnabled="true"
         app:flingEnabled="true"
         app:scrollEnabled="true"
@@ -30,6 +30,6 @@
         app:minZoomType="zoom"
         app:maxZoom="2.5"
         app:maxZoomType="zoom"
-        app:animationDuration="280"/>
+        app:animationDuration="0"/>
 
 </FrameLayout>
