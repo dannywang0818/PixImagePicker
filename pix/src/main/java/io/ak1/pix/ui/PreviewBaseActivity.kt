@@ -16,6 +16,7 @@
 
 package io.ak1.pix.ui
 
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -26,12 +27,11 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import io.ak1.pix.R
 import io.ak1.pix.adapters.PreviewPagerAdapter
 import io.ak1.pix.databinding.ActivityPreviewBinding
 import io.ak1.pix.livedata.MediaLiveData
+import io.ak1.pix.models.Img
 import io.ak1.pix.models.ModelList
 
 /**
@@ -101,8 +101,25 @@ abstract class PreviewBaseActivity : FragmentActivity() {
             changeDataSet { items.addNewAt(itemSpinner.selectedItemPosition + 1) }
         }
 
-        items.imageList.observe(this ){
+        items.imageList.observe(this) {
             previewAdapter.setItems(it)
+
+            val currentItem: Img? =
+                intent.getParcelableExtra(EXTRA_ITEM)
+
+            var titleCount = 0;
+            for ((i, inItem) in it?.list!!.withIndex()) {
+                if(i >= currentItem!!.position) {
+                    break
+                }
+                if (i < currentItem!!.position && inItem.contentUrl == Uri.EMPTY) {
+                    titleCount++
+                }
+            }
+
+//        val selectedIndex: Int = items.indexOf(selected)
+            viewPager.setCurrentItem(currentItem!!.position - titleCount, false)
+//        mPreviousPos = selectedIndex
         }
 
 
@@ -140,6 +157,7 @@ abstract class PreviewBaseActivity : FragmentActivity() {
         // item spinner update
         (itemSpinner.adapter as BaseAdapter).notifyDataSetChanged()
     }
+
     val items: ItemsViewModel by viewModels()
 
     companion object {

@@ -18,13 +18,12 @@ data class Img(
     var headerDate: String = "",
     var contentUrl: Uri = Uri.EMPTY,
     var scrollerDate: String = "",
-    var mediaType: Int = 1
+    var mediaType: Int = 1,
+    var position: Int = 0
 ) : Parcelable {
     @IgnoredOnParcel
     var selected = false
 
-    @IgnoredOnParcel
-    var position = 0
 }
 
 @SuppressLint("ParcelCreator")
