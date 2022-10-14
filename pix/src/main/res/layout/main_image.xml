@@ -35,6 +35,7 @@
         android:layout_gravity="center"
         android:background="@drawable/bg_dark"
         android:padding="16dp"
+        android:visibility="gone"
         android:src="@drawable/ic_check_black_24dp" />
 
     <ImageView

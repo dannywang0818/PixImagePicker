@@ -398,6 +398,17 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
                     position.selection(it)
                     return@onImageLongSelected true
                 }
+
+            override fun onCheckBoxClick(element: Img?, view: View?, position: Int) =
+                model.onImageLongSelected(element, position) {
+                    val size = model.selectionListSize
+                    if (options.count <= size) {
+                        requireActivity().toast(size)
+                        return@onImageLongSelected false
+                    }
+                    position.selection(it)
+                    return@onImageLongSelected true
+                }
         }
         instantImageAdapter = InstantImageAdapter(context).apply {
             addOnSelectionListener(onSelectionListener)

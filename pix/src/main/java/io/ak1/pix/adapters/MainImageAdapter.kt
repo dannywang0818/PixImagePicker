@@ -164,10 +164,10 @@ internal class MainImageAdapter(context: Context, internal val spanCount: Int) :
             mainImageBinding.root.setOnLongClickListener(this)
 
             mainImageBinding.checkView.setOnClickListener {
-                if (it is CheckView){
-                    it.setChecked(true)
-                }
+                val id = this.layoutPosition
+                onSelectionListener!!.onCheckBoxClick(itemList[id], it, id)
             }
+
             mainImageBinding.preview.layoutParams = layoutParams
 
             glide.asBitmap()
@@ -179,9 +179,15 @@ internal class MainImageAdapter(context: Context, internal val spanCount: Int) :
             } else if (image.mediaType == 3) {
                 mainImageBinding.isVideo.show()
             }
-            mainImageBinding.selection.apply {
-                if (image.selected) show() else hide()
-            }
+//            mainImageBinding.selection.apply {
+//                if (image.selected) show() else hide()
+//            }
+
+            if (image.selected)
+                mainImageBinding.checkView.setChecked(true)
+            else
+                mainImageBinding.checkView.setChecked(false)
+
         }
     }
 

@@ -19,6 +19,7 @@ interface PixLifecycle {
 interface OnSelectionListener {
     fun onClick(element: Img?, view: View?, position: Int)
     fun onLongClick(element: Img?, view: View?, position: Int)
+    fun onCheckBoxClick(element: Img?, view: View?, position: Int)
 }
 
 interface SectionIndexer {
