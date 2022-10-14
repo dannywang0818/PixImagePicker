@@ -2,4 +2,7 @@
 <resources>
     <attr name="preview.bottomToolbar.back.textColor" format="reference|color" />
     <attr name="preview.bottomToolbar.apply.textColor" format="reference|color"/>
+
+    <attr name="item.checkCircle.borderColor" format="reference|color"/>
+    <attr name="item.checkCircle.backgroundColor" format="reference|color"/>
 </resources>

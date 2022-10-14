@@ -26,6 +26,7 @@ import io.ak1.pix.interfaces.OnSelectionListener
 import io.ak1.pix.interfaces.SectionIndexer
 import io.ak1.pix.interfaces.StickyHeaderInterface
 import io.ak1.pix.models.Img
+import io.ak1.pix.ui.widget.CheckView
 import io.ak1.pix.utility.TAG
 import io.ak1.pix.utility.WIDTH
 
@@ -161,7 +162,14 @@ internal class MainImageAdapter(context: Context, internal val spanCount: Int) :
         fun bind(image: Img) {
             mainImageBinding.root.setOnClickListener(this)
             mainImageBinding.root.setOnLongClickListener(this)
+
+            mainImageBinding.checkView.setOnClickListener {
+                if (it is CheckView){
+                    it.setChecked(true)
+                }
+            }
             mainImageBinding.preview.layoutParams = layoutParams
+
             glide.asBitmap()
                 .load(image.contentUrl)
                 .apply(options)
