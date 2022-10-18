@@ -1,6 +1,7 @@
 package io.ak1.pix
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -10,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
 import androidx.core.view.ViewCompat
@@ -332,6 +334,15 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
 //        }
 
     }
+    val previewForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data
+            // Handle the Intent
+
+            mainImageAdapter.notifyDataSetChanged()
+
+        }
+    }
 
     private fun setupAdapters(context: FragmentActivity) {
 
@@ -369,8 +380,10 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
 //                registerForActivityResult
 
 
-                startActivity(intent)
+//                startActivity(intent)
 
+
+                previewForResult.launch(intent)
 
 //                startActivityForResult(
 //                    intent,

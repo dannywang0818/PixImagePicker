@@ -84,4 +84,31 @@ class ModelList(
 
     }
 
+    fun calculateGridPositionFromPagerPosition(pagerPosition: Int): Int {
+        var gridPosition = pagerPosition
+        for ((i, inItem) in list.withIndex()) {
+            if (i == gridPosition) {
+                break
+            }
+            if (inItem.contentUrl == Uri.EMPTY) {
+                gridPosition++
+            }
+        }
+
+        return gridPosition
+    }
+
+    fun getImgIndex(img: Img): Int {
+
+        var headerCount = 0
+        for ((i, inItem) in list.withIndex()) {
+            if (inItem.contentUrl == Uri.EMPTY) {
+                headerCount++
+            } else if (inItem.contentUrl == img.contentUrl) {
+                return i - headerCount
+            }
+        }
+        return -1
+    }
+
 }

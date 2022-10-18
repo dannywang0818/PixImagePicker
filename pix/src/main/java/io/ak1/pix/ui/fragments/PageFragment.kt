@@ -6,16 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import io.ak1.pix.databinding.FragmentPageBinding
 import io.ak1.pix.engine.PicassoEngine
 import io.ak1.pix.models.Img
+import io.ak1.pix.ui.ItemsViewModel
 import io.ak1.pix.ui.widget.CheckView
 import io.ak1.pix.utility.PhotoMetadataUtils
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val PIX_IMG = "PIX_IMG"
-private const val ARG_PARAM2 = "param2"
+private const val PAGER_POSITION = "PAGER_POSITION"
 
 /**
  * A simple [Fragment] subclass.
@@ -26,17 +28,18 @@ class PageFragment : Fragment() {
 
     private var _binding: FragmentPageBinding? = null
     private val binding get() = _binding!!
+    val items: ItemsViewModel by activityViewModels()
 
 
     // TODO: Rename and change types of parameters
     private var pixImg: Img? = null
-    private var param2: String? = null
+    private var pagerPosition: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             pixImg = it.getParcelable(PIX_IMG)
-            param2 = it.getString(ARG_PARAM2)
+            pagerPosition = it.getInt(PAGER_POSITION)
         }
     }
 
@@ -64,15 +67,24 @@ class PageFragment : Fragment() {
             requireActivity()
         )
         if (size != null) {
-            PicassoEngine.get().loadImage(context, size.x, size.y, zoomImageView, pixImg?.contentUrl)
+            PicassoEngine.get()
+                .loadImage(context, size.x, size.y, zoomImageView, pixImg?.contentUrl)
         }
 
         binding.checkViewOfPreview.setOnClickListener {
 //            val id = this.layoutPosition
 //            onSelectionListener!!.onCheckBoxClick(itemList[id], it, id)
 
-            if (it is CheckView){
-                it.setChecked(true)
+
+            if (it is CheckView) {
+                items.checkViewClicked(pixImg, pagerPosition) {
+                    return@checkViewClicked true
+                }
+                if (it.checked()) {
+                    it.setChecked(false)
+                } else {
+                    it.setChecked(true)
+                }
             }
         }
 
@@ -90,11 +102,11 @@ class PageFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(pixImg: Img?, param2: String) =
+        fun newInstance(pixImg: Img?, position: Int) =
             PageFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(PIX_IMG, pixImg)
-                    putString(ARG_PARAM2, param2)
+                    putInt(PAGER_POSITION, position)
                 }
             }
     }

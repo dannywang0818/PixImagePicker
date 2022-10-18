@@ -40,7 +40,7 @@ class PreviewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
                 }
             }
         }
-        return PageFragment.newInstance(img, "2")
+        return PageFragment.newInstance(img, position)
     }
 
     override fun getItemCount(): Int {

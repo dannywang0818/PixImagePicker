@@ -16,24 +16,21 @@
 
 package io.ak1.pix.ui
 
+import android.app.Activity
+import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.DiffUtil
 import androidx.viewpager2.widget.ViewPager2
 import io.ak1.pix.adapters.PreviewPagerAdapter
 import io.ak1.pix.databinding.ActivityPreviewBinding
 import io.ak1.pix.livedata.MediaLiveData
 import io.ak1.pix.models.Img
 import io.ak1.pix.models.ModelList
-import io.ak1.pix.ui.widget.CheckView
 
 /**
  * Shows how to use notifyDataSetChanged with [ViewPager2]
@@ -43,7 +40,7 @@ abstract class PreviewBaseActivity : FragmentActivity() {
 
     private lateinit var binding: ActivityPreviewBinding
 
-//    private lateinit var buttonAddAfter: Button
+    //    private lateinit var buttonAddAfter: Button
 //    private lateinit var buttonAddBefore: Button
 //    private lateinit var buttonGoTo: Button
 //    private lateinit var buttonRemove: Button
@@ -109,22 +106,28 @@ abstract class PreviewBaseActivity : FragmentActivity() {
             val currentItem: Img? =
                 intent.getParcelableExtra(EXTRA_ITEM)
 
-            var titleCount = 0;
-            for ((i, inItem) in it?.list!!.withIndex()) {
-                if(i >= currentItem!!.position) {
-                    break
-                }
-                if (i < currentItem!!.position && inItem.contentUrl == Uri.EMPTY) {
-                    titleCount++
-                }
-            }
+
+            val currentImgIndex = it?.getImgIndex(currentItem!!)
+
 
 //        val selectedIndex: Int = items.indexOf(selected)
-            viewPager.setCurrentItem(currentItem!!.position - titleCount, false)
+            viewPager.setCurrentItem(currentImgIndex!!, false)
 //        mPreviousPos = selectedIndex
         }
 
 
+    }
+
+
+    override fun onBackPressed() {
+
+        val data = Intent()
+//        data.putExtra("streetkey", "streetname")
+//        data.putExtra("citykey", "cityname")
+//        data.putExtra("homekey", "homename")
+
+        setResult(Activity.RESULT_OK, data)
+        finish()
     }
 
 //    private fun changeDataSet(performChanges: () -> Unit) {
@@ -186,6 +189,15 @@ class ItemsViewModel : ViewModel() {
     fun removeAt(position: Int) = items.removeAt(position)
     fun createIdSnapshot(): List<Long> = (0 until size).map { position -> itemId(position) }
     val size: Int get() = items.size
+
+    fun checkViewClicked(element: Img?, position: Int, callback: (Boolean) -> Boolean) {
+
+        val imgCollection = allImagesList.value
+
+        val gridPosition = imgCollection!!.calculateGridPositionFromPagerPosition(position)
+
+        imgCollection!!.triggerSelection(element, gridPosition, callback)
+    }
 
     private fun longToItem(value: Long): String = "item#$value"
     private fun itemToLong(value: String): Long = value.split("#")[1].toLong()

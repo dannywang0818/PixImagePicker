@@ -106,6 +106,10 @@ public class CheckView extends View {
         invalidate();
     }
 
+    public boolean checked() {
+        return mChecked;
+    }
+
     public void setCountable(boolean countable) {
         mCountable = countable;
     }
