@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright 2019 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright 2019 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,13 +13,13 @@
      limitations under the License.
 -->
 
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:ignore="UnusedAttribute">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:ignore="UnusedAttribute">
+
     <FrameLayout
         android:id="@+id/topbar"
         android:layout_width="match_parent"
@@ -69,28 +68,38 @@
             android:src="@drawable/ic_check_box" />
     </FrameLayout>
 
-    <TextView
-            android:text="viewpager2"
-            android:textStyle="bold"
-            android:textDirection="locale"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"/>
+    <!--    <TextView
+                android:text="viewpager2"
+                android:textStyle="bold"
+                android:textDirection="locale"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"/>-->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
 
-    <androidx.viewpager2.widget.ViewPager2
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_height="match_parent"/>
+
+        <io.ak1.pix.ui.widget.CheckView
+            android:id="@+id/checkViewOfPreview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right" />
+    </FrameLayout>
 
     <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="?android:attr/listDivider"/>
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
 
-    <LinearLayout
+    <!--<LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -180,5 +189,5 @@
                     android:layout_margin="@dimen/spacer_small"
                     android:text="add_new_after"/>
         </LinearLayout>
-    </LinearLayout>
+    </LinearLayout>-->
 </LinearLayout>
