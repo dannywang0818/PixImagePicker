@@ -13,10 +13,10 @@ class PreviewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
 //    override fun createFragment(position: Int): Fragment = PreviewPagerFragment()
 
 
-    private var items: ModelList? = null
+    private var imageCollection: ModelList? = null
 
     fun setItems(imageItems: ModelList?) {
-        items = imageItems
+        imageCollection = imageItems
         notifyDataSetChanged()
     }
 
@@ -25,10 +25,11 @@ class PreviewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
 //        val itemText = items.getItemById(itemId)
 
         var img: Img? = null
-        if (items != null && items?.list != null) {
+
+        if (imageCollection != null && imageCollection?.list != null) {
 
             var i = 0
-            for (item in items?.list!!) {
+            for (item in imageCollection?.list!!) {
                 if (item.contentUrl != Uri.EMPTY) {
                     if (i == position) {
                         img = item
@@ -44,13 +45,13 @@ class PreviewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
 
     override fun getItemCount(): Int {
 //        return 100
-        if (items == null) {
+        if (imageCollection == null) {
             return 0
         }
-        if (items != null && items?.list != null) {
+        if (imageCollection != null && imageCollection?.list != null) {
 
             var i = 0
-            for (item in items?.list!!) {
+            for (item in imageCollection?.list!!) {
                 if (item.contentUrl != Uri.EMPTY) {
                         i++
                 }

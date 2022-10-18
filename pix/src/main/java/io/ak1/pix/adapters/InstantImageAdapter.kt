@@ -30,7 +30,7 @@ import java.util.*
 
 class InstantImageAdapter(context: Context) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val itemList: ArrayList<Img> = ArrayList()
+    private var itemList: ArrayList<Img> = ArrayList<Img>()
     private var onSelectionListener: OnSelectionListener? = null
     private val glide: RequestManager = Glide.with(context)
     private val options: RequestOptions =
@@ -44,6 +44,13 @@ class InstantImageAdapter(context: Context) :
 
     fun addImageList(images: ArrayList<Img>) {
         itemList.addAll(images)
+        notifyDataSetChanged()
+    }
+
+    fun setImageList(images: ArrayList<Img>) {
+        if (itemList != images) {
+            itemList = images
+        }
         notifyDataSetChanged()
     }
 

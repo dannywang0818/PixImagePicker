@@ -185,8 +185,8 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
         model.setOptions(options)
         model.imageList.observe(requireActivity()) {
             //Log.e(TAG, "imageList size is now ${it.list.size}")
-            instantImageAdapter.addImageList(it.list)
-            mainImageAdapter.addImageList(it.list)
+            instantImageAdapter.setImageList(it.list)
+            mainImageAdapter.setImageList(it.list)
             model.selectionList.value?.addAll(it.selection)
             model.selectionList.postValue(model.selectionList.value)
             binding.gridLayout.arrowUp.apply {

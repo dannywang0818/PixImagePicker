@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import io.ak1.pix.databinding.FragmentPageBinding
 import io.ak1.pix.engine.PicassoEngine
 import io.ak1.pix.models.Img
+import io.ak1.pix.ui.widget.CheckView
 import io.ak1.pix.utility.PhotoMetadataUtils
 
 // TODO: Rename parameter arguments, choose names that match
@@ -65,6 +66,17 @@ class PageFragment : Fragment() {
         if (size != null) {
             PicassoEngine.get().loadImage(context, size.x, size.y, zoomImageView, pixImg?.contentUrl)
         }
+
+        binding.checkViewOfPreview.setOnClickListener {
+//            val id = this.layoutPosition
+//            onSelectionListener!!.onCheckBoxClick(itemList[id], it, id)
+
+            if (it is CheckView){
+                it.setChecked(true)
+            }
+        }
+
+        binding.checkViewOfPreview.setChecked(pixImg!!.selected)
     }
 
     companion object {

@@ -40,7 +40,7 @@ internal class MainImageAdapter(context: Context, internal val spanCount: Int) :
     StickyHeaderInterface,
     SectionIndexer, ListPreloader.PreloadModelProvider<Img> {
 
-    private val itemList: ArrayList<Img> = ArrayList()
+    private var itemList: ArrayList<Img> = ArrayList<Img>()
     private var onSelectionListener: OnSelectionListener? = null
     private val layoutParams: FrameLayout.LayoutParams
     private val glide: RequestManager
@@ -70,6 +70,13 @@ internal class MainImageAdapter(context: Context, internal val spanCount: Int) :
 
     fun addImageList(images: ArrayList<Img>) {
         itemList.addAll(images)
+        notifyDataSetChanged()
+    }
+
+    fun setImageList(images: ArrayList<Img>){
+        if (itemList != images){
+            itemList = images
+        }
         notifyDataSetChanged()
     }
 

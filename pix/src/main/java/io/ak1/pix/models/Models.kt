@@ -68,5 +68,20 @@ class ModelList(
     var list: ArrayList<Img> = ArrayList(),
     var selection: ArrayList<Img> = ArrayList()
 ) {
+    fun triggerSelection(element: Img?, position: Int, callback: (Boolean) -> Boolean) {
+
+        selection.apply {
+            if (contains(element)) {
+                remove(element)
+                callback(false)
+                list[position].selected = false
+            } else if (callback(true)) {
+                element!!.position = (position)
+                add(element)
+                list[position].selected = true
+            }
+        }
+
+    }
 
 }

@@ -36,4 +36,10 @@
             app:verticalPanEnabled="true"
             app:zoomEnabled="true" />
     </io.ak1.pix.helpers.NestedScrollableHost>
+
+    <io.ak1.pix.ui.widget.CheckView
+        android:id="@+id/checkViewOfPreview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right" />
 </FrameLayout>

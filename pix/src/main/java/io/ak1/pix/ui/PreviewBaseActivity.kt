@@ -103,14 +103,6 @@ abstract class PreviewBaseActivity : FragmentActivity() {
 //        }
 
 
-        binding.checkViewOfPreview.setOnClickListener {
-//            val id = this.layoutPosition
-//            onSelectionListener!!.onCheckBoxClick(itemList[id], it, id)
-
-            if (it is CheckView){
-                it.setChecked(true)
-            }
-        }
         items.imageList.observe(this) {
             previewAdapter.setItems(it)
 

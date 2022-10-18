@@ -78,6 +78,9 @@ internal class PixViewModel : ViewModel(), PixLifecycle {
         if (options.count > 1) {
             // Utility.Companion.vibe(this@Pix, 50)
             longSelection.postValue(true)
+
+
+
             selectionList.value?.apply {
                 if (contains(element)) {
                     remove(element)
@@ -88,6 +91,12 @@ internal class PixViewModel : ViewModel(), PixLifecycle {
                 }
             }
             selectionList.postValue(selectionList.value)
+
+
+            val imgCollection = allImagesList.value
+
+            imgCollection!!.triggerSelection(element, position, callback)
+//            allImagesList.postValue(imgCollection!!)
         }
     }
 
@@ -97,7 +106,7 @@ internal class PixViewModel : ViewModel(), PixLifecycle {
         this.options = options
     }
 
-    companion object{
+    companion object {
 
     }
 }
