@@ -73,9 +73,10 @@ class ModelList(
         selection.apply {
             if (contains(element)) {
                 remove(element)
-                callback(false)
+//                callback(false)
                 list[position].selected = false
-            } else if (callback(true)) {
+//            } else if (callback(true)) {
+            } else {
                 element!!.position = (position)
                 add(element)
                 list[position].selected = true
