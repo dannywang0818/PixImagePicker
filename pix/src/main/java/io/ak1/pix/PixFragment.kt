@@ -36,6 +36,8 @@ import io.ak1.pix.utility.ARG_PARAM_PIX_KEY
 import io.ak1.pix.utility.CustomItemTouchListener
 import kotlinx.coroutines.*
 import java.lang.Runnable
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.coroutines.cancellation.CancellationException
 
 /**
@@ -305,7 +307,11 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
                 2 -> model.longSelection.postValue(true)
                 3 -> requireActivity().scanPhoto(uri.toFile()) { it ->
 
-                    model.addSelectedImgAtFirst(Img(contentUrl = it))
+                    val dateDifference =
+                        requireContext().resources.getDateDifference(
+                            Calendar.getInstance())
+
+                    model.addSelectedImgAtFirst(Img(headerDate = dateDifference, contentUrl = it))
 
                     if (model.selectedImages().isEmpty()) {
 //                        model.addSelectedImg(Img(contentUrl = it))

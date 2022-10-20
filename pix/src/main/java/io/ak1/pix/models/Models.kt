@@ -131,7 +131,14 @@ class ModelList(
 
     fun addSelectedImgAtFirst(img: Img) {
         img.position = 0
-        list.add(0, img)
+        img.selected = true
+
+        val header = img.headerDate
+        if (!header.equals(list[0].headerDate, ignoreCase = true)) {
+            list.add(0, Img(header))
+        }
+
+        list.add(1, img)
         selection.add(0, img)
 
         for ((i, inItem) in selection.withIndex()) {
