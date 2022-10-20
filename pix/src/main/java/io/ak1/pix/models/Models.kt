@@ -84,7 +84,7 @@ class ModelList(
             } else if (callback(true)) {
 //            } else {
                 element!!.position = (position)
-                add(element)
+                add(imgOrderIndex(position), element)
                 list[position].selected = true
             }
         }
@@ -146,6 +146,16 @@ class ModelList(
                 inItem.position++
             }
         }
+    }
+
+
+    private fun imgOrderIndex(position: Int): Int {
+        for ((i, inItem) in selection.withIndex()) {
+            if (position < inItem.position) {
+                return i
+            }
+        }
+        return selection.size
     }
 
 }
