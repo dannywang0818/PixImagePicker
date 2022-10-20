@@ -189,20 +189,15 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
             //Log.e(TAG, "imageList size is now ${it.list.size}")
             instantImageAdapter.setImageList(it.list)
             mainImageAdapter.setImageList(it.list)
-            model.selectionList.value?.addAll(it.selection)
-            model.selectionList.postValue(model.selectionList.value)
+//            model.selectionList.value?.addAll(it.selection)
+//            model.selectionList.postValue(model.selectionList.value)
+            selectionViewChanged(model.selectedImages())
+
             binding.gridLayout.arrowUp.apply {
                 if (mainImageAdapter.listSize != 0) show() else hide()
             }
         }
         model.selectionList.observe(requireActivity()) {
-            //Log.e(TAG, "selectionList size is now ${it.size}")
-            if (it.size == 0) {
-                model.longSelection.postValue(false)
-            } else if (!model.longSelectionValue) {
-                model.longSelection.postValue(true)
-            }
-            binding.setSelectionText(requireActivity(), it.size)
         }
         model.longSelection.observe(requireActivity()) {
             //Log.e(TAG, "longSelection is now changed to  $it")
@@ -213,12 +208,30 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
         }
         model.callResults.observe(requireActivity()) { event ->
             event?.getContentIfNotHandledOrReturnNull()?.let { set ->
-                model.selectionList.postValue(HashSet())
+//                model.selectionList.postValue(HashSet())
+                clearSelectedImages()
                 options.preSelectedUrls.clear()
                 val results = set.map { it.contentUrl }
                 invokeCallback(PixEventCallback.Results(results));
             }
         }
+    }
+
+    private fun clearSelectedImages() {
+
+        model.clearImageSelection();
+        selectionViewChanged(ArrayList())
+    }
+
+    private fun selectionViewChanged(selectedImgList: List<Img>) {
+
+        //Log.e(TAG, "selectionList size is now ${it.size}")
+        if (selectedImgList == null || selectedImgList!!.isEmpty()) {
+            model.longSelection.postValue(false)
+        } else if (!model.longSelectionValue) {
+            model.longSelection.postValue(true)
+        }
+        binding.setSelectionText(requireActivity(), selectedImgList!!.size)
     }
 
     private fun invokeCallback(result: PixEventCallback.Results) {
@@ -255,15 +268,22 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
 //        if (f is PixFragment)
 //            return@on;
 
-            val list = model.selectionList.value ?: HashSet()
+
+//            val list = model.selectionList.value ?: HashSet()
             when {
-                list.size > 0 -> {
-                    for (img in list) {
-                        //  options.preSelectedUrls = ArrayList()
-                        instantImageAdapter.select(false, img.position)
-                        mainImageAdapter.select(false, img.position)
-                    }
-                    model.selectionList.postValue(HashSet())
+                model.anySelectedImage() -> {
+
+                    clearSelectedImages()
+
+                    mainImageAdapter.notifyDataSetChanged();
+                    instantImageAdapter.notifyDataSetChanged();
+
+//                    for (img in list) {
+//                        //  options.preSelectedUrls = ArrayList()
+//                        instantImageAdapter.select(false, img.position)
+//                        mainImageAdapter.select(false, img.position)
+//                    }
+//                    model.selectionList.postValue(HashSet())
                 }
                 mBottomSheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED -> {
                     mBottomSheetBehavior?.setState(BottomSheetBehavior.STATE_COLLAPSED)
@@ -284,22 +304,25 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
                 1 -> mBottomSheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
                 2 -> model.longSelection.postValue(true)
                 3 -> requireActivity().scanPhoto(uri.toFile()) { it ->
-                    if (model.selectionList.value.isNullOrEmpty()) {
-                        model.selectionList.value?.add(Img(contentUrl = it))
+
+                    model.addSelectedImgAtFirst(Img(contentUrl = it))
+
+                    if (model.selectedImages().isEmpty()) {
+//                        model.addSelectedImg(Img(contentUrl = it))
                         scope.cancel(CancellationException("canceled intentionally"))
                         model.returnObjects()
                         return@scanPhoto
                     }
-                    model.selectionList.value?.add(Img(contentUrl = it))
+//                    model.selectionList.value?.add(Img(contentUrl = it))
                     Handler(Looper.getMainLooper()).post {
                         binding.setSelectionText(
                             requireActivity(),
-                            (model.selectionList.value ?: HashSet()).size
+                            model.selectedImages().size
                         )
-                        options.preSelectedUrls.clear()
-                        options.preSelectedUrls.addAll(
-                            (model.selectionList.value ?: HashSet()).map { it.contentUrl })
-                        retrieveMedia()
+//                        options.preSelectedUrls.clear()
+//                        options.preSelectedUrls.addAll(
+//                            (model.selectionList.value ?: HashSet()).map { it.contentUrl })
+//                        retrieveMedia()
                     }
                 }
                 4 -> if (model.longSelectionValue) binding.gridLayout.sendButtonStateAnimation(false)
@@ -334,15 +357,17 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
 //        }
 
     }
-    val previewForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val intent = result.data
-            // Handle the Intent
 
-            mainImageAdapter.notifyDataSetChanged()
+    val previewForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val intent = result.data
+                // Handle the Intent
 
+                mainImageAdapter.notifyDataSetChanged()
+
+            }
         }
-    }
 
     private fun setupAdapters(context: FragmentActivity) {
 
@@ -412,7 +437,7 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
                     return@onImageLongSelected true
                 }
 
-            override fun onCheckBoxClick(element: Img?, view: View?, position: Int) =
+            override fun onCheckBoxClick(element: Img?, view: View?, position: Int){
                 model.onImageLongSelected(element, position) {
                     val size = model.selectionListSize
                     if (options.count <= size) {
@@ -422,6 +447,9 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
                     position.selection(it)
                     return@onImageLongSelected true
                 }
+                selectionViewChanged(model.selectedImages())
+            }
+
         }
         instantImageAdapter = InstantImageAdapter(context).apply {
             addOnSelectionListener(onSelectionListener)

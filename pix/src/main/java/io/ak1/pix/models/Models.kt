@@ -68,15 +68,21 @@ class ModelList(
     var list: ArrayList<Img> = ArrayList(),
     var selection: ArrayList<Img> = ArrayList()
 ) {
+
+    fun addBefore(beforeOne: ModelList) {
+        list.addAll(0, beforeOne.list)
+        selection.addAll(0, beforeOne.selection)
+    }
+
     fun triggerSelection(element: Img?, position: Int, callback: (Boolean) -> Boolean) {
 
         selection.apply {
             if (contains(element)) {
                 remove(element)
-//                callback(false)
+                callback(false)
                 list[position].selected = false
-//            } else if (callback(true)) {
-            } else {
+            } else if (callback(true)) {
+//            } else {
                 element!!.position = (position)
                 add(element)
                 list[position].selected = true
@@ -110,6 +116,29 @@ class ModelList(
             }
         }
         return -1
+    }
+
+    fun anySelectedImage(): Boolean {
+        return selection.size > 0
+    }
+
+    fun clearImageSelection() {
+        for ((i, inItem) in selection.withIndex()) {
+            list[inItem.position].selected = false
+        }
+        selection.clear()
+    }
+
+    fun addSelectedImgAtFirst(img: Img) {
+        img.position = 0
+        list.add(0, img)
+        selection.add(0, img)
+
+        for ((i, inItem) in selection.withIndex()) {
+            if (i > 0) {
+                inItem.position++
+            }
+        }
     }
 
 }

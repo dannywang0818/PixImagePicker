@@ -8,6 +8,7 @@ import io.ak1.pix.utility.TAG
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.lang.RuntimeException
 
 /**
  * Created By Akshay Sharma on 17,June,2021
@@ -21,33 +22,42 @@ internal class PixViewModel : ViewModel(), PixLifecycle {
     val selectionList by lazy { MutableLiveData<MutableSet<Img>>(HashSet()) }
     private val allImagesList by lazy { MediaLiveData.get(MediaLiveData.TAG) }
     val imageList: LiveData<ModelList> = allImagesList
-    val callResults by lazy { MutableLiveData<Event<MutableSet<Img>>>() }
+    val callResults by lazy { MutableLiveData<Event<ArrayList<Img>>>() }
     val longSelectionValue: Boolean
         get() {
             return longSelection.value ?: false
         }
     val selectionListSize: Int
         get() {
-            return selectionList.value?.size ?: 0
+//            return selectionList.value?.size ?: 0
+            return imageList.value!!.selection.size
         }
 
     private lateinit var options: Options
     fun retrieveImages(localResourceManager: LocalResourceManager) {
+
+        // load image only once
+        if (imageList.value != null && imageList.value!!.list != null && imageList.value!!.list!!.size > 0) {
+            return
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
 
             val sizeInitial = 100
-            selectionList.value?.clear()
+//            selectionList.value?.clear()
+            val modelListPageFirst = localResourceManager.retrieveMedia(
+                limit = sizeInitial,
+                mode = options.mode
+            )
             allImagesList.postValue(
-                localResourceManager.retrieveMedia(
-                    limit = sizeInitial,
-                    mode = options.mode
-                )
+                modelListPageFirst
             )
             val modelList = localResourceManager.retrieveMedia(
-//                start = sizeInitial + 1,
+                start = sizeInitial + 1,
                 mode = options.mode
             )
             if (modelList.list.isNotEmpty()) {
+                modelList.addBefore(modelListPageFirst)
                 allImagesList.postValue(modelList)
             }
         }
@@ -56,6 +66,7 @@ internal class PixViewModel : ViewModel(), PixLifecycle {
 
     override fun onImageSelected(element: Img?, position: Int, callback: (Boolean) -> Boolean) {
         if (longSelectionValue) {
+            throw RuntimeException("Toto exception: delete selectionList!!!!!!")
             selectionList.value?.apply {
                 if (contains(element)) {
                     remove(element)
@@ -81,16 +92,16 @@ internal class PixViewModel : ViewModel(), PixLifecycle {
 
 
 
-            selectionList.value?.apply {
-                if (contains(element)) {
-                    remove(element)
-                    callback(false)
-                } else if (callback(true)) {
-                    element!!.position = (position)
-                    add(element)
-                }
-            }
-            selectionList.postValue(selectionList.value)
+//            selectionList.value?.apply {
+//                if (contains(element)) {
+//                    remove(element)
+//                    callback(false)
+//                } else if (callback(true)) {
+//                    element!!.position = (position)
+//                    add(element)
+//                }
+//            }
+//            selectionList.postValue(selectionList.value)
 
 
             val imgCollection = allImagesList.value
@@ -100,10 +111,32 @@ internal class PixViewModel : ViewModel(), PixLifecycle {
         }
     }
 
-    fun returnObjects() = callResults.postValue(Event(selectionList.value ?: HashSet()))
+    fun returnObjects() = callResults.postValue(Event(imageList.value!!.selection))
 
     fun setOptions(options: Options) {
         this.options = options
+    }
+
+    fun anySelectedImage(): Boolean {
+        val imgCollection = allImagesList.value
+        return imgCollection!!.anySelectedImage()
+    }
+
+    fun clearImageSelection() {
+        val imgCollection = allImagesList.value
+        imgCollection!!.clearImageSelection()
+    }
+
+    fun selectedImages(): List<Img> {
+
+        val imgCollection = allImagesList.value
+        return imgCollection!!.selection
+    }
+
+    fun addSelectedImgAtFirst(img: Img) {
+        val imgCollection = allImagesList.value
+        imgCollection!!.addSelectedImgAtFirst(img)
+        allImagesList.postValue(imgCollection!!)
     }
 
     companion object {
