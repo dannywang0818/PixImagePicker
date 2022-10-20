@@ -43,6 +43,7 @@ class FragmentSample : AppCompatActivity() {
                         Log.e(TAG, "showCameraFragment: ${it.path}")
                     }
                     resultsFragment.setList(it.data)
+                    supportFragmentManager.popBackStack()
                 }
                 PixEventCallback.Status.BACK_PRESSED -> {
                     supportFragmentManager.popBackStack()

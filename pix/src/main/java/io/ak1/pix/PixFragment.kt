@@ -211,10 +211,11 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
         model.callResults.observe(requireActivity()) { event ->
             event?.getContentIfNotHandledOrReturnNull()?.let { set ->
 //                model.selectionList.postValue(HashSet())
-                clearSelectedImages()
-                options.preSelectedUrls.clear()
                 val results = set.map { it.contentUrl }
                 invokeCallback(PixEventCallback.Results(results));
+
+                clearSelectedImages()
+                options.preSelectedUrls.clear()
             }
         }
     }
