@@ -62,11 +62,13 @@ private fun manipulateVisibility(
         if (1 - slideOffset == 0f) {
             instantRecyclerView.hide()
             arrowUp.hide()
-            controlsLayout.primaryClickButton.hide()
+            controlsLayout.controlsLayout.hide()
+//            controlsLayout.primaryClickButton.hide()
         } else if (instantRecyclerView.isGone && 1 - slideOffset > 0) {
             instantRecyclerView.show()
             arrowUp.show()
-            controlsLayout.primaryClickButton.show()
+            controlsLayout.controlsLayout.show()
+//            controlsLayout.primaryClickButton.show()
         }
         if (slideOffset > 0 && recyclerView.isInvisible) {
             recyclerView.show()
