@@ -46,14 +46,17 @@ class NavControllerSample : AppCompatActivity() {
         PixBus.results {
             if (it.status == SUCCESS) {
                 showStatusBar()
-                navController.navigateUp()
+//                navController.navigateUp()
+                navController.popBackStack()
             }
         }
+
+        showStatusBar()
     }
 
     override fun onBackPressed() {
         if (navController.currentDestination == navController.graph[R.id.CameraFragment]) {
-            PixBus.onBackPressedEvent()
+        PixBus.onBackPressedEvent()
         } else {
             super.onBackPressed()
         }
@@ -84,6 +87,7 @@ class NavResultsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = fragmentBody(requireActivity(), recyclerViewAdapter) {
+
         var bundle = bundleOf(ARG_PARAM_PIX to options)
         findNavController().navigate(R.id.action_ResultsFragment_to_CameraFragment, bundle)
     }

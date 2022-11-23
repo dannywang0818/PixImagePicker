@@ -314,12 +314,12 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
 
                     model.addSelectedImgAtFirst(Img(headerDate = dateDifference, contentUrl = it))
 
-                    if (model.selectedImages().isEmpty()) {
-//                        model.addSelectedImg(Img(contentUrl = it))
-                        scope.cancel(CancellationException("canceled intentionally"))
-                        model.returnObjects()
-                        return@scanPhoto
-                    }
+//                    if (model.selectedImages().isEmpty()) {
+////                        model.addSelectedImg(Img(contentUrl = it))
+//                        scope.cancel(CancellationException("canceled intentionally"))
+//                        model.returnObjects()
+//                        return@scanPhoto
+//                    }
 //                    model.selectionList.value?.add(Img(contentUrl = it))
                     Handler(Looper.getMainLooper()).post {
                         binding.setSelectionText(
@@ -378,8 +378,8 @@ class PixFragment(private val resultCallback: ((PixEventCallback.Results) -> Uni
 
     private fun setupAdapters(context: FragmentActivity) {
 
-        val containerId = (binding.root.parent as ViewGroup).id;
-        Log.e(TAG, "containerId: $containerId")
+//        val containerId = (binding.root.parent as ViewGroup).id;
+//        Log.e(TAG, "containerId: $containerId")
         val onSelectionListener: OnSelectionListener = object : OnSelectionListener {
             override fun onClick(element: Img?, view: View?, position: Int) {
 
